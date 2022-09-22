@@ -1,9 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const logger = require("./middleware/logger");
+// const logger = require("./middleware/logger");
 const morgan = require("morgan");
 const colors = require("colors");
 const connectDB = require("./config/db");
+const errorHandler = require("./middleware/error");
 //Load env vars
 dotenv.config({ path: "./config/config.env" });
 
@@ -15,6 +16,9 @@ const bootcamps = require("./routes/bootcamps");
 
 const app = express();
 
+// Body Parser
+app.use(express.json());
+
 //dev logging middleware
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -22,6 +26,8 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount Routers
 app.use("/api/v1/bootcamps", bootcamps);
+
+app.use(errorHandler); // This should be after Mounted Router to work
 
 const PORT = process.env.PORT || 5000;
 
